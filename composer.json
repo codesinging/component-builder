@@ -16,6 +16,11 @@
             "CodeSinging\\ComponentBuilder\\": "src"
         }
     },
+    "autoload-dev": {
+        "psr-4": {
+            "CodeSinging\\ComponentBuilder\\Tests\\": "tests"
+        }
+    },
     "require-dev": {
         "phpunit/phpunit": "^6"
     }
