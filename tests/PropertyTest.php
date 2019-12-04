@@ -111,10 +111,12 @@ class PropertyTest extends TestCase
     {
         self::assertEquals('id="1"', $this->prop()->create('id', 1));
         self::assertEquals('id="1"', $this->prop()->create('id', "1"));
-        self::assertEquals('disabled="1"', $this->prop()->create('disabled', true));
-        self::assertEquals('disabled=""', $this->prop()->create('disabled', false));
+        self::assertEquals(':disabled="true"', $this->prop()->create('disabled', true));
+        self::assertEquals(':disabled="false"', $this->prop()->create('disabled', false));
         self::assertEquals('disabled', $this->prop()->create('disabled', null));
         self::assertEquals('disabled', $this->prop()->create('disabled'));
+        self::assertEquals(':data="{\"id\":1}"', $this->prop()->create('data', ['id' => 1]));
+        self::assertEquals(':data="[{\"id\":1}]"', $this->prop()->create('data', [['id' => 1]]));
     }
 
     public function testBuild()

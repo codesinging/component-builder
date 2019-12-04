@@ -116,14 +116,25 @@ class Property extends Builder
      * Create attribute string.
      *
      * @param string      $key
-     * @param string|null $value
+     * @param string|array|bool|null $value
      *
      * @return string
      */
-    public function create(string $key, string $value = null)
+    public function create(string $key,  $value = null)
     {
         if (is_null($value)) {
             return sprintf('%s', $key);
+        }
+
+        if ($value===true){
+            $value = 'true';
+            $key = Str::start($key, ':');
+        } elseif ($value===false){
+            $value = 'false';
+            $key = Str::start($key, ':');
+        } elseif (is_array($value)){
+            $value = addslashes(json_encode($value));
+            $key = Str::start($key, ':');
         }
 
         return sprintf('%s="%s"', $key, $value);
