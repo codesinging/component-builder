@@ -132,6 +132,26 @@ class Element extends Builder
     }
 
     /**
+     * Set a `v-bind` property.
+     *
+     * @param string|array $name
+     * @param string|null  $value
+     *
+     * @return $this
+     */
+    public function bind($name, string $value = null)
+    {
+        if (is_string($name)) {
+            $this->set($name, null, $value);
+        } elseif (is_array($name)) {
+            foreach ($name as $key => $val) {
+                $this->set($key, null, $val);
+            }
+        }
+        return $this;
+    }
+
+    /**
      * Set event attribute.
      *
      * @param array|string $name
@@ -255,8 +275,8 @@ class Element extends Builder
      * Add content, support binding and storing.
      *
      * @param string|array|Builder|Closure $content
-     * @param string|null              $bind
-     * @param bool                     $store
+     * @param string|null                  $bind
+     * @param bool                         $store
      *
      * @return $this
      */

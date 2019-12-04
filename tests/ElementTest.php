@@ -26,7 +26,7 @@ class ElementTest extends TestCase
         self::assertEquals('<div>ba</div>', (new Element('div', 'a'))->prepend('b'));
         self::assertEquals('<div>ab</div>', (new Element('div', 'a'))->content('b'));
         self::assertEquals('<div>ab</div>', (new Element('div'))->add('a', 'b'));
-        self::assertEquals('<div>abc</div>', (new Element('div','c'))->prepend('a', 'b'));
+        self::assertEquals('<div>abc</div>', (new Element('div', 'c'))->prepend('a', 'b'));
     }
 
     public function testEmpty()
@@ -65,6 +65,12 @@ class ElementTest extends TestCase
         self::assertEquals(99, Store::get('book.id'));
         self::assertEquals(22, Store::get('cid'));
         self::assertEquals(66, Store::get('v.id'));
+    }
+
+    public function testBind()
+    {
+        self::assertEquals('<div :id="id"></div>', (new Element())->bind('id', 'id'));
+        self::assertEquals('<div :id="id"></div>', (new Element())->bind(['id' => 'id']));
     }
 
     public function testGet()
