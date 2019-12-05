@@ -61,6 +61,12 @@ class Element extends Builder
     public $parent;
 
     /**
+     * The element's default properties.
+     * @var array
+     */
+    protected $props = [];
+
+    /**
      * Builder constructor.
      *
      * @param string                 $tag
@@ -73,7 +79,8 @@ class Element extends Builder
     {
         $this->tag($tag);
         $this->content = new Content($content);
-        $this->property = new Property($properties);
+        $this->property = new Property($this->props);
+        $this->property->set($properties);
         $this->css = new Css();
         $this->style = new Style();
         $this->end($end);

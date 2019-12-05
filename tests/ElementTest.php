@@ -165,6 +165,12 @@ class ElementTest extends TestCase
         self::assertEquals('<i class="icon-home"></i>', new ExampleInitElement());
     }
 
+    public function testProps()
+    {
+        self::assertEquals('<input type="password">', (new Element('input', null, ['type' => 'password'], false))->build());
+        self::assertEquals('<input type="password">', new PasswordInput('input', null, [], false));
+    }
+
     public function testBuild()
     {
         self::assertEquals('<span>__build</span>', new ExampleBuildElement('div'));
@@ -186,4 +192,11 @@ class ExampleBuildElement extends Element
         $this->tag('span');
         $this->content('__build');
     }
+}
+
+class PasswordInput extends Element
+{
+    protected $props = [
+        'type' => 'password'
+    ];
 }
