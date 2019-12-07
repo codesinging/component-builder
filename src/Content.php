@@ -154,7 +154,7 @@ class Content extends Builder
      *
      * @return $this
      */
-    public function glue(string $glue)
+    public function glue(string $glue = PHP_EOL)
     {
         $this->glue = $glue;
         return $this;
