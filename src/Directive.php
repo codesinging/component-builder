@@ -132,51 +132,14 @@ trait Directive
      * Add `v-model` directive.
      *
      * @param string $model
+     * @param string $modifier
      *
      * @return $this
      */
-    public function vModel(string $model)
+    public function vModel(string $model, string $modifier = '')
     {
-        $this->set('v-model', $model);
-        return $this;
-    }
-
-    /**
-     * Add `v-model.lazy` directive.
-     *
-     * @param string $model
-     *
-     * @return $this
-     */
-    public function vModelLazy(string $model)
-    {
-        $this->set('v-model.lazy', $model);
-        return $this;
-    }
-
-    /**
-     * Add `v-model.number` directive.
-     *
-     * @param string $model
-     *
-     * @return $this
-     */
-    public function vModelNumber(string $model)
-    {
-        $this->set('v-model.number', $model);
-        return $this;
-    }
-
-    /**
-     * Add `v-model.trim` directive.
-     *
-     * @param string $model
-     *
-     * @return $this
-     */
-    public function vModelTrim(string $model)
-    {
-        $this->set('v-model.trim', $model);
+        $modifier = Str::start($modifier, '.');
+        $this->set('v-model' . $modifier, $model);
         return $this;
     }
 
