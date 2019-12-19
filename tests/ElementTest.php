@@ -29,6 +29,11 @@ class ElementTest extends TestCase
         self::assertEquals('<div>abc</div>', (new Element('div', 'c'))->prepend('a', 'b'));
     }
 
+    public function testSlot()
+    {
+        self::assertEquals('<div><template slot="header">Header</template></div>', (new Element())->slot('header', 'Header')->build());
+    }
+
     public function testEmpty()
     {
         self::assertTrue((new Element())->empty());

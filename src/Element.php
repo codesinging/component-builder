@@ -312,6 +312,9 @@ class Element extends Builder
             $content = call_user_func($content);
             $content->set('slot', $name);
         }
+
+        $this->add($content);
+
         return $this;
     }
 
