@@ -165,6 +165,20 @@ class ElementTest extends TestCase
         self::assertEquals('<button @click="click" @on-change="onChange"></button>', (new Element('button'))->vOn(['click', 'on-change']));
     }
 
+    public function testVClick()
+    {
+        self::assertEquals('<button @click="onClick"></button>', (new Element('button'))->vClick('onClick'));
+        self::assertEquals('<button @click.stop="onClick"></button>', (new Element('button'))->vClick('onClick','stop'));
+    }
+
+    public function testVClickBind()
+    {
+        self::assertEquals('<button @click="message = \'hello world\'"></button>', (new Element('button'))->vClickBind('message', 'hello world')->build());
+        self::assertEquals('<button @click="age = 20"></button>', (new Element('button'))->vClickBind('age',20)->build());
+        self::assertEquals('<button @click="visible = true"></button>', (new Element('button'))->vClickBind('visible',true));
+        self::assertEquals('<button @click="visible = false"></button>', (new Element('button'))->vClickBind('visible',false));
+    }
+
     public function testInit()
     {
         self::assertEquals('<i class="icon-home"></i>', new ExampleInitElement());

@@ -129,6 +129,46 @@ trait Directive
     }
 
     /**
+     * Add a `v-on:click` directive.
+     *
+     * @param string      $handler
+     * @param string|null $modifier
+     *
+     * @return $this
+     */
+    public function vClick(string $handler, string $modifier = null)
+    {
+        $event = 'click' . ($modifier ? '.' . $modifier : '');
+        $this->vOn($event, $handler);
+        return $this;
+    }
+
+    /**
+     * Add a `v-on:click` directive, and the handler assign a specific value to a property.
+     *
+     * @param string      $prop
+     * @param             $value
+     * @param string|null $modifier
+     *
+     * @return $this
+     */
+    public function vClickBind(string $prop, $value, string $modifier = null)
+    {
+        if (is_string($value)) {
+            $value = "'$value'";
+        } elseif ($value === true) {
+            $value = 'true';
+        } elseif ($value === false) {
+            $value = 'false';
+        }
+
+        $handler = sprintf('%s = %s', $prop, $value);
+        $this->vClick($handler, $modifier);
+
+        return $this;
+    }
+
+    /**
      * Add `v-model` directive.
      *
      * @param string $model
