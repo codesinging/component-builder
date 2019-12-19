@@ -70,12 +70,12 @@ class Element extends Builder
      * Builder constructor.
      *
      * @param string                 $tag
-     * @param string|Builder|Closure $content
+     * @param string|array|Builder|Closure $content
      * @param array|null             $properties
      * @param bool                   $end
      * @param bool                   $eol
      */
-    public function __construct(string $tag = 'div', string $content = null, array $properties = null, bool $end = true, bool $eol = false)
+    public function __construct(string $tag = 'div', $content = null, array $properties = null, bool $end = true, bool $eol = false)
     {
         $this->tag($tag);
         $this->content = new Content($content);
