@@ -178,7 +178,7 @@ trait Directive
      */
     public function vModel(string $model, string $modifier = '')
     {
-        $modifier = Str::start($modifier, '.');
+        $modifier and $modifier = Str::start($modifier, '.');
         $this->set('v-model' . $modifier, $model);
         return $this;
     }
