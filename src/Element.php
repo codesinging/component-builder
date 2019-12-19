@@ -295,6 +295,27 @@ class Element extends Builder
     }
 
     /**
+     * Add a named slot to the content.
+     *
+     * @param string                 $name
+     * @param string|Builder|Closure $content
+     *
+     * @return $this
+     */
+    public function slot(string $name, $content)
+    {
+        if (is_string($content)) {
+            $content = new Element('template', $content, ['slot' => $name]);
+        } elseif ($content instanceof Builder) {
+            $content->set('slot', $name);
+        } elseif ($content instanceof Closure) {
+            $content = call_user_func($content);
+            $content->set('slot', $name);
+        }
+        return $this;
+    }
+
+    /**
      * Determine if the content is empty.
      * @return bool
      */
