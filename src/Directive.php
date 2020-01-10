@@ -6,7 +6,7 @@
 
 namespace CodeSinging\ComponentBuilder;
 
-use CodeSinging\Helpers\Str;
+use CodeSinging\Support\Str;
 
 trait Directive
 {

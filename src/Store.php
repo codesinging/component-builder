@@ -6,7 +6,7 @@
 
 namespace CodeSinging\ComponentBuilder;
 
-use CodeSinging\Helpers\Arr;
+use CodeSinging\Support\Arr;
 
 class Store
 {
@@ -19,12 +19,15 @@ class Store
     /**
      * Store a property value.
      *
-     * @param string $name
-     * @param mixed  $value
+     * @param string|array $name
+     * @param mixed|null   $value
      */
-    public static function set(string $name, $value)
+    public static function set($name, $value = null)
     {
-        Arr::set(self::$values, $name, $value);
+        is_string($name) and $name = [$name => $value];
+        foreach ($name as $key => $val) {
+            Arr::set(self::$values, $key, $val);
+        }
     }
 
     /**
@@ -47,5 +50,13 @@ class Store
     public static function all()
     {
         return self::$values;
+    }
+
+    /**
+     * Clear all values.
+     */
+    public static function clear()
+    {
+        self::$values = [];
     }
 }

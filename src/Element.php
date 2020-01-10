@@ -7,34 +7,41 @@
 namespace CodeSinging\ComponentBuilder;
 
 use Closure;
+use CodeSinging\Support\Str;
 
-class Element extends Builder
+class Element implements Buildable
 {
     use Directive;
 
     /**
-     * The tag.
+     * The element tag.
      * @var string
      */
-    protected $tag;
+    protected $tag = '';
 
     /**
-     * The element Property instance.
-     * @var Property
+     * The Attribute instance.
+     * @var Attribute
      */
-    public $property;
+    protected $attribute;
 
     /**
-     * If there is an end tag.
+     * The Content instance.
+     * @var Content
+     */
+    protected $content;
+
+    /**
+     * If the element has a closing tag.
      * @var bool
      */
-    protected $end = true;
+    protected $closing = true;
 
     /**
-     * If there is an 'End Of Line' between the begin tag and the end tag.
+     * If the element has line break between the opening tag, content and the closing tag.
      * @var bool
      */
-    protected $eol = false;
+    protected $lineBreak = false;
 
     /**
      * The Css instance.
@@ -49,42 +56,36 @@ class Element extends Builder
     public $style;
 
     /**
-     * The Content instance.
-     * @var Content
-     */
-    public $content;
-
-    /**
      * The parent element instance.
      * @var Element
      */
     public $parent;
 
     /**
-     * The element's default properties.
+     * The element's default attributes.
      * @var array
      */
-    protected $props = [];
+    protected $attributes = [];
 
     /**
      * Builder constructor.
      *
-     * @param string                 $tag
-     * @param string|array|Builder|Closure $content
-     * @param array|null             $properties
-     * @param bool                   $end
-     * @param bool                   $eol
+     * @param string                         $tag
+     * @param string|array|Buildable|Closure $content
+     * @param array|null                     $attributes
+     * @param bool                           $closing
+     * @param bool                           $lineBreak
      */
-    public function __construct(string $tag = 'div', $content = null, array $properties = null, bool $end = true, bool $eol = false)
+    public function __construct(string $tag = 'div', $content = null, array $attributes = null, bool $closing = true, bool $lineBreak = false)
     {
         $this->tag($tag);
         $this->content = new Content($content);
-        $this->property = new Property($this->props);
-        $this->property->set($properties);
+        $this->attribute = new Attribute($this->attributes);
+        $this->attribute->set($attributes);
         $this->css = new Css();
         $this->style = new Style();
-        $this->end($end);
-        $this->eol($eol);
+        $this->closing($closing);
+        $this->lineBreak($lineBreak);
         $this->__init();
     }
 
@@ -101,7 +102,7 @@ class Element extends Builder
      *
      * @param mixed ...$parameters
      *
-     * @return static
+     * @return Element
      */
     public static function instance(...$parameters)
     {
@@ -124,37 +125,15 @@ class Element extends Builder
     /**
      * Set properties.
      *
-     * @param string|array|null $name
-     * @param mixed|null        $value
-     * @param string|array|null $bind
-     * @param bool              $store
+     * @param string|array     $name
+     * @param mixed|array|null $value
+     * @param mixed|null       $store
      *
      * @return $this
      */
-    public function set($name, $value = null, $bind = null, bool $store = false)
+    public function set($name, $value = null, $store = null)
     {
-        $this->property->set($name, $value, $bind, $store);
-
-        return $this;
-    }
-
-    /**
-     * Set a `v-bind` property.
-     *
-     * @param string|array $name
-     * @param string|null  $value
-     *
-     * @return $this
-     */
-    public function bind($name, string $value = null)
-    {
-        if (is_string($name)) {
-            $this->set($name, null, $value);
-        } elseif (is_array($name)) {
-            foreach ($name as $key => $val) {
-                $this->set($key, null, $val);
-            }
-        }
+        $this->attribute->set($name, $value, $store);
         return $this;
     }
 
@@ -177,9 +156,11 @@ class Element extends Builder
                     list($key, $value) = [$value, null];
                 }
                 if (is_null($value)) {
-                    $value = $key;
+                    $value = Str::camel($key);
                 }
-                $this->set($key, $value);
+
+                $key = $this->attribute->fill($key, '@');
+                $this->attribute->set($key, $value);
             }
         }
         return $this;
@@ -195,19 +176,19 @@ class Element extends Builder
      */
     public function get(string $name, $default = null)
     {
-        return $this->property->get($name, $default);
+        return $this->attribute->get($name, $default);
     }
 
     /**
      * Determine if there is an end tag.
      *
-     * @param bool $end
+     * @param bool $closing
      *
      * @return $this
      */
-    public function end(bool $end = true)
+    public function closing(bool $closing = true)
     {
-        $this->end = $end;
+        $this->closing = $closing;
         return $this;
     }
 
@@ -218,9 +199,9 @@ class Element extends Builder
      *
      * @return $this
      */
-    public function eol(bool $eol = true)
+    public function lineBreak(bool $eol = true)
     {
-        $this->eol = $eol;
+        $this->lineBreak = $eol;
         return $this;
     }
 
@@ -255,7 +236,7 @@ class Element extends Builder
     /**
      * Add contents.
      *
-     * @param string|array|Builder|Closure ...$contents
+     * @param string|array|Buildable|Closure ...$contents
      *
      * @return $this
      */
@@ -268,7 +249,7 @@ class Element extends Builder
     /**
      * Prepend contents.
      *
-     * @param string|array|Builder|Closure ...$contents
+     * @param string|array|Buildable|Closure ...$contents
      *
      * @return $this
      */
@@ -279,17 +260,16 @@ class Element extends Builder
     }
 
     /**
-     * Add content, support binding and storing.
+     * Add a text interpolation, and support store default value.
      *
-     * @param string|array|Builder|Closure $content
-     * @param string|null                  $bind
-     * @param bool                         $store
+     * @param string     $content
+     * @param mixed|null $store
      *
      * @return $this
      */
-    public function content($content, string $bind = null, bool $store = false)
+    public function interpolation($content, $store = null)
     {
-        $this->content->content($content, $bind, $store);
+        $this->content->interpolation($content, $store);
 
         return $this;
     }
@@ -298,15 +278,15 @@ class Element extends Builder
      * Add a named slot to the content.
      *
      * @param string                 $name
-     * @param string|Builder|Closure $content
+     * @param string|Buildable|Closure $content
      *
      * @return $this
      */
     public function slot(string $name, $content)
     {
         if (is_string($content)) {
-            $content = new Element('template', $content, ['slot' => $name]);
-        } elseif ($content instanceof Builder) {
+            $content = new self('template', $content, ['slot' => $name]);
+        } elseif ($content instanceof self) {
             $content->set('slot', $name);
         } elseif ($content instanceof Closure) {
             $content = call_user_func($content);
@@ -319,12 +299,12 @@ class Element extends Builder
     }
 
     /**
-     * Determine if the content is empty.
+     * Determine if the element content is empty.
      * @return bool
      */
-    public function empty()
+    public function isEmpty()
     {
-        return $this->content->empty();
+        return $this->content->isEmpty();
     }
 
     /**
@@ -345,19 +325,19 @@ class Element extends Builder
      *
      * @param string|Closure $tag
      * @param array          $attributes
-     * @param bool           $eol
+     * @param bool           $lineBreak
      *
      * @return $this
      */
-    public function parent($tag = 'div', array $attributes = [], bool $eol = false)
+    public function parent($tag = 'div', array $attributes = [], bool $lineBreak = false)
     {
         if ($tag instanceof Closure) {
-            $parent = new Element();
+            $parent = new self();
             $this->parent = call_user_func($tag, $parent) ?? $parent;
-        } elseif ($tag instanceof Element) {
+        } elseif ($tag instanceof self) {
             $this->parent = $tag;
         } else {
-            $this->parent = new Element($tag, '', $attributes, true, $eol);
+            $this->parent = new self($tag, '', $attributes, true, $lineBreak);
         }
         return $this;
     }
@@ -369,7 +349,7 @@ class Element extends Builder
     {
         if (!$this->css->empty()) {
             $this->css->prepend($this->get('class'));
-            $this->set('class', $this->css->build());
+            $this->set('class', (string)$this->css);
         }
     }
 
@@ -380,7 +360,7 @@ class Element extends Builder
     {
         if (!$this->style->empty()) {
             $this->style->prepend($this->get('style'));
-            $this->set('style', $this->style->build());
+            $this->set('style', (string)$this->style);
         }
     }
 
@@ -393,29 +373,28 @@ class Element extends Builder
     }
 
     /**
-     * Build the element.
+     * Return a string.
      * @return string
      */
-    public function build()
+    public function __toString()
     {
         $this->__build();
 
-        $content = $this->content->build();
         $this->mergeCss();
         $this->mergeStyle();
 
         $element = sprintf(
             '<%s%s>%s%s%s%s',
             $this->tag,
-            $this->property->build(),
-            $this->eol && !empty($content) ? PHP_EOL : '',
-            $content,
-            $this->eol && $this->end ? PHP_EOL : '',
-            $this->end ? '</' . $this->tag . '>' : ''
+            $this->attribute->isEmpty() ? '': ' ' . (string)$this->attribute,
+            $this->lineBreak && !$this->content->isEmpty() ? PHP_EOL : '',
+            (string)$this->content,
+            $this->lineBreak && $this->closing ? PHP_EOL : '',
+            $this->closing ? '</' . $this->tag . '>' : ''
         );
 
-        if ($this->parent) {
-            return $this->parent->add($element)->build();
+        if ($this->parent instanceof self){
+            return  (string)$this->parent->add($element);
         }
 
         return $element;

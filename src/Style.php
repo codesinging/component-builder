@@ -8,7 +8,7 @@ namespace CodeSinging\ComponentBuilder;
 
 use Closure;
 
-class Style extends Builder
+class Style implements Buildable
 {
     /**
      * All of the style items.
@@ -146,7 +146,7 @@ class Style extends Builder
      * Build the data to string.
      * @return string
      */
-    public function build()
+    public function __toString()
     {
         $arr = [];
         foreach ($this->items as $key => $value) {

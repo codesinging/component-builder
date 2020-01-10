@@ -74,8 +74,8 @@ class CssTest extends TestCase
     public function testBuild()
     {
         $css = $this->css('margin', 'padding');
-        self::assertEquals('margin padding', $css->build());
-        self::assertEquals($css, $css->build());
-        self::assertTrue($css == $css->build());
+        self::assertEquals('margin padding', $css);
+        self::assertEquals($css, (string)$css);
+        self::assertTrue($css == (string)$css);
     }
 }

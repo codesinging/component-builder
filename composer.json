@@ -10,8 +10,8 @@
     ],
     "require": {
         "php": ">=7.0",
-        "codesinging/helpers": "^1.0",
-        "ext-json": "*"
+        "ext-json": "*",
+        "codesinging/support": "^1.2"
     },
     "autoload": {
         "psr-4": {

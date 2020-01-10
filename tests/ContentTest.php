@@ -18,16 +18,19 @@ class ContentTest extends TestCase
         self::assertEquals('ab', new Content('a', 'b'));
     }
 
-    public function testParams()
+    public function testContentIsString()
     {
-        // string
         self::assertEquals('a', new Content('a'));
         self::assertEquals('ab', (new Content('a'))->add('b'));
+    }
 
-        // Stringify
+    public function testContentIsBuildable()
+    {
         self::assertEquals('ab', (new Content('a'))->add(new Content('b')));
+    }
 
-        // Closure
+    public function testContentIsClosure()
+    {
         self::assertEquals('ab', new Content(function () {
             return 'ab';
         }));
@@ -55,20 +58,24 @@ class ContentTest extends TestCase
         self::assertEquals('abc', (new Content('c'))->prepend(['a', 'b']));
     }
 
-    public function testContent()
+    public function testInterpolation()
     {
-        self::assertEquals('name', (new Content())->content('name'));
-        self::assertEquals('{{ name }}', (new Content())->content('Name', 'name'));
-        self::assertEquals('{{ age }}', (new Content())->content(11, 'age', true));
-        self::assertEquals(11, Store::get('age'));
+        self::assertEquals('{{ name }}', (new Content())->interpolation('name'));
+        self::assertEquals('{{ "id-"+id }}', (new Content())->interpolation('"id-"+id'));
+    }
+
+    public function testInterpolationAndStore()
+    {
+        self::assertEquals('{{ age }}', (new Content())->interpolation('age', 20));
+        self::assertEquals(20, Store::get('age'));
     }
 
     public function testEmpty()
     {
-        self::assertTrue((new Content())->empty());
-        self::assertTrue((new Content(null))->empty());
-        self::assertFalse((new Content(''))->empty());
-        self::assertFalse((new Content('a'))->empty());
+        self::assertTrue((new Content())->isEmpty());
+        self::assertTrue((new Content(null))->isEmpty());
+        self::assertFalse((new Content(''))->isEmpty());
+        self::assertFalse((new Content('a'))->isEmpty());
     }
 
     public function testGlue()
@@ -80,12 +87,12 @@ class ContentTest extends TestCase
         self::assertEquals('a|b|c', $content->glue('|'));
     }
 
-    public function testEol()
+    public function testGlueLineBreak()
     {
         $content = new Content('a', 'b');
-        self::assertEquals('a' . PHP_EOL . 'b', $content->eol());
-        self::assertEquals('a' . PHP_EOL . PHP_EOL . 'b', $content->eol(2));
-        self::assertEquals(PHP_EOL . 'a' . PHP_EOL . 'b', $content->prepend('')->eol());
+        self::assertEquals('a' . PHP_EOL . 'b', $content->glueLineBreak());
+        self::assertEquals('a' . PHP_EOL . PHP_EOL . 'b', $content->glueLineBreak(2));
+        self::assertEquals(PHP_EOL . 'a' . PHP_EOL . 'b', $content->prepend('')->glueLineBreak());
     }
 
     public function testAddBlank()
@@ -97,10 +104,10 @@ class ContentTest extends TestCase
         self::assertEquals('', end($items));
     }
 
-    public function testAddNewline()
+    public function testAddLineBreak()
     {
         $content = new Content('a', 'b');
-        $content->addNewline();
+        $content->addLineBreak();
         $items = $content->all();
 
         self::assertEquals(PHP_EOL, end($items));

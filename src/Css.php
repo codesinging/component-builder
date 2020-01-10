@@ -8,7 +8,7 @@ namespace CodeSinging\ComponentBuilder;
 
 use Closure;
 
-class Css extends Builder
+class Css implements Buildable
 {
     /**
      * All of the css class items.
@@ -150,7 +150,7 @@ class Css extends Builder
      * Build the class data to string.
      * @return string
      */
-    public function build()
+    public function __toString()
     {
         return implode(' ', $this->items);
     }

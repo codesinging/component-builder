@@ -8,7 +8,7 @@ namespace CodeSinging\ComponentBuilder;
 
 use Closure;
 
-class Content extends Builder
+class Content implements Buildable
 {
     /**
      * All of the content items.
@@ -25,7 +25,7 @@ class Content extends Builder
     /**
      * Content constructor.
      *
-     * @param string|array|Builder|Closure $contents
+     * @param string|array|Buildable|Closure $contents
      */
     public function __construct(...$contents)
     {
@@ -35,7 +35,7 @@ class Content extends Builder
     /**
      * Parse the content.
      *
-     * @param string|Builder|Closure $content
+     * @param string|Buildable|Closure $content
      *
      * @return string
      */
@@ -92,7 +92,7 @@ class Content extends Builder
     /**
      * Add content.
      *
-     * @param string|array|Builder|Closure $contents
+     * @param string|array|Buildable|Closure $contents
      *
      * @return $this
      */
@@ -107,7 +107,7 @@ class Content extends Builder
     /**
      * Prepend content.
      *
-     * @param string|array|Builder|Closure $contents
+     * @param string|array|Buildable|Closure $contents
      *
      * @return $this
      */
@@ -119,22 +119,17 @@ class Content extends Builder
     }
 
     /**
-     * Add content, and support binding and storing.
+     * Add a text interpolation, and support store default value.
      *
-     * @param string|array|Builder|Closure $content
-     * @param string|null                  $bind
-     * @param bool                         $store
+     * @param string     $content
+     * @param mixed|null $store
      *
      * @return $this
      */
-    public function content($content, string $bind = null, bool $store = false)
+    public function interpolation($content, $store = null)
     {
-        if ($bind) {
-            $this->add(sprintf('{{ %s }}', $bind));
-            $store and $this->store($bind, $content);
-        } else {
-            $this->add($content);
-        }
+        $this->add(sprintf('{{ %s }}', $content));
+        is_null($store) or $this->store($content, $store);
         return $this;
     }
 
@@ -142,7 +137,7 @@ class Content extends Builder
      * Determine if the content is empty.
      * @return bool
      */
-    public function empty()
+    public function isEmpty()
     {
         return empty($this->items);
     }
@@ -167,7 +162,7 @@ class Content extends Builder
      *
      * @return $this
      */
-    public function eol(int $count = 1)
+    public function glueLineBreak(int $count = 1)
     {
         $this->glue(str_repeat(PHP_EOL, $count));
         return $this;
@@ -189,7 +184,7 @@ class Content extends Builder
      *
      * @return $this
      */
-    public function addNewline()
+    public function addLineBreak()
     {
         $this->add(PHP_EOL);
         return $this;
@@ -208,7 +203,7 @@ class Content extends Builder
      * Build content to a string.
      * @return string
      */
-    public function build()
+    public function __toString()
     {
         return implode($this->glue, array_map([$this, 'parse'], $this->items));
     }
