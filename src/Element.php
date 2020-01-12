@@ -17,7 +17,7 @@ class Element implements Buildable
      * The element tag.
      * @var string
      */
-    protected $tag = '';
+    protected $tag = 'div';
 
     /**
      * The Attribute instance.

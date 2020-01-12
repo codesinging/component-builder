@@ -25,11 +25,11 @@ class Component extends Element
     /**
      * Component constructor.
      *
-     * @param array $props
+     * @param array $attributes
      */
-    public function __construct(array $props = [])
+    public function __construct(array $attributes = [])
     {
-        parent::__construct($this->tagPrefix . $this->baseTag(), null, $props, true, false);
+        parent::__construct($this->tagPrefix . $this->baseTag(), null, $attributes, true, false);
     }
 
     /**
@@ -39,5 +39,21 @@ class Component extends Element
     public function baseTag()
     {
         return $this->baseTag ?: Str::kebab((basename(str_replace('\\', '/', get_class($this)))));
+    }
+
+    /**
+     * Handle dynamic calls to the component to set attributes.
+     *
+     * @param $name
+     * @param $arguments
+     *
+     * @return $this
+     */
+    public function __call($name, $arguments)
+    {
+        $name = Str::kebab($name);
+        $this->set($name, $arguments[0] ?? true, $arguments[1] ?? null);
+
+        return $this;
     }
 }
