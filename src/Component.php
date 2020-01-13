@@ -14,7 +14,7 @@ class Component extends Element
      * The component tag prefix.
      * @var string
      */
-    protected $tagPrefix = '';
+    protected $tagPrefix = 'el-';
 
     /**
      * The component's base tag.
