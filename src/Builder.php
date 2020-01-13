@@ -9,7 +9,7 @@ namespace CodeSinging\ComponentBuilder;
 use Closure;
 use CodeSinging\Support\Str;
 
-class Element implements Buildable
+class Builder implements Buildable
 {
     use Directive;
 
@@ -57,7 +57,7 @@ class Element implements Buildable
 
     /**
      * The parent element instance.
-     * @var Element
+     * @var Builder
      */
     public $parent;
 
@@ -102,7 +102,7 @@ class Element implements Buildable
      *
      * @param mixed ...$parameters
      *
-     * @return Element
+     * @return Builder
      */
     public static function instance(...$parameters)
     {
@@ -339,6 +339,22 @@ class Element implements Buildable
         } else {
             $this->parent = new self($tag, '', $attributes, true, $lineBreak);
         }
+        return $this;
+    }
+
+    /**
+     * Handle dynamic calls to the builder to set attributes.
+     *
+     * @param $name
+     * @param $arguments
+     *
+     * @return $this
+     */
+    public function __call($name, $arguments)
+    {
+        $name = Str::kebab($name);
+        $this->set($name, $arguments[0] ?? true, $arguments[1] ?? null);
+
         return $this;
     }
 
