@@ -145,6 +145,24 @@ class ElementTest extends TestCase
         self::assertEquals('demo', $builder->config('name'));
     }
 
+    public function testStoreWhenNameIsArray()
+    {
+        Store::clear();
+        $builder = new Builder();
+        $builder->store(['name' => 'app']);
+
+        self::assertEquals('app', Store::get('name'));
+    }
+
+    public function testStoreWhenNameIsString()
+    {
+        Store::clear();
+        $builder = new Builder();
+        $builder->store(['name' => 'app']);
+
+        self::assertEquals('app', $builder->store('name'));
+    }
+
     public function testBuildableAndIsBuildable()
     {
         $builder = new Builder();

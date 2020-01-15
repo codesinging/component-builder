@@ -380,6 +380,24 @@ class Builder implements Buildable
     }
 
     /**
+     * Store value to the Stores or get value from the Stores.
+     *
+     * @param string|array $name
+     * @param null|mixed   $default
+     *
+     * @return $this|mixed
+     */
+    public function store($name, $default = null)
+    {
+        if (is_array($name)) {
+            Store::set($name);
+        } else {
+            return Store::get($name, $default);
+        }
+        return $this;
+    }
+
+    /**
      * Set whether the component is buildable.
      *
      * @param bool $buildable
