@@ -55,15 +55,6 @@ class ElementTest extends TestCase
         self::assertEquals(66, Store::get('v.id'));
     }
 
-    public function testOn()
-    {
-        self::assertEquals('<button @click="onClick"></button>', (new Builder('button'))->on('click', 'onClick'));
-        self::assertEquals('<button @click="click"></button>', (new Builder('button'))->on('click'));
-        self::assertEquals('<button @on-change="onChange"></button>', (new Builder('button'))->on('on-change'));
-        self::assertEquals('<button @click="click" @on-change="onChange"></button>', (new Builder('button'))->on(['click' => 'click', 'on-change' => 'onChange']));
-        self::assertEquals('<button @click="click" @on-change="onChange"></button>', (new Builder('button'))->on(['click', 'on-change']));
-    }
-
     public function testGet()
     {
         self::assertEquals(100, (new Builder('div'))->set('id', 100)->get('id'));

@@ -138,35 +138,6 @@ class Builder implements Buildable
     }
 
     /**
-     * Set event attribute.
-     *
-     * @param array|string $name
-     * @param null|string  $value
-     *
-     * @return $this
-     */
-    public function on($name, $value = null)
-    {
-        if (is_string($name)) {
-            $name = [$name => $value];
-        }
-        if (is_array($name)) {
-            foreach ($name as $key => $value) {
-                if (is_int($key)) {
-                    list($key, $value) = [$value, null];
-                }
-                if (is_null($value)) {
-                    $value = Str::camel($key);
-                }
-
-                $key = $this->attribute->fill($key, '@');
-                $this->attribute->set($key, $value);
-            }
-        }
-        return $this;
-    }
-
-    /**
      * Get the specified property value.
      *
      * @param string     $name
@@ -256,6 +227,18 @@ class Builder implements Buildable
     public function prepend(...$contents)
     {
         $this->content->prepend(...$contents);
+        return $this;
+    }
+
+    /**
+     * Clear existed content items and then add contents.
+     * @param string|array|Buildable|Closure ...$contents
+     *
+     * @return $this
+     */
+    public function content(...$contents)
+    {
+        $this->content->content(...$contents);
         return $this;
     }
 
