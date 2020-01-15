@@ -110,6 +110,7 @@ class ContentTest extends TestCase
         self::assertEquals('a b c', $content->glue(' '));
         self::assertEquals('a,b,c', $content->glue(','));
         self::assertEquals('a|b|c', $content->glue('|'));
+        self::assertEquals('a' . PHP_EOL . 'b' . PHP_EOL . 'c', $content->glue(true));
     }
 
     public function testGlueLineBreak()

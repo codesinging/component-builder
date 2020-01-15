@@ -172,12 +172,13 @@ class Content implements Buildable
     /**
      * Set the glue of the content items.
      *
-     * @param string $glue
+     * @param string|bool $glue
      *
      * @return $this
      */
-    public function glue(string $glue = PHP_EOL)
+    public function glue($glue = true)
     {
+        true === $glue and $glue = PHP_EOL;
         $this->glue = $glue;
         return $this;
     }
