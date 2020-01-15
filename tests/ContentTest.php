@@ -6,6 +6,7 @@
 
 namespace CodeSinging\ComponentBuilder\Tests;
 
+use CodeSinging\ComponentBuilder\Builder;
 use CodeSinging\ComponentBuilder\Content;
 use CodeSinging\ComponentBuilder\Store;
 use PHPUnit\Framework\TestCase;
@@ -24,9 +25,23 @@ class ContentTest extends TestCase
         self::assertEquals('ab', (new Content('a'))->add('b'));
     }
 
-    public function testContentIsBuildable()
+    public function testContentIsCommonBuildableContent()
     {
         self::assertEquals('ab', (new Content('a'))->add(new Content('b')));
+    }
+
+    public function testContentIsBuildableBuilder()
+    {
+        self::assertEquals('<div></div>', (new Builder('div')));
+    }
+
+    public function testContentIsNotBuildableBuilder()
+    {
+        $span = new Builder('span');
+        $div = (new Builder('div'))->buildable(false);
+        self::assertEquals('<span></span>', new Content($span));
+        self::assertEquals('', new Content($div));
+        self::assertEquals('<span></span>', new Content($span, $div));
     }
 
     public function testContentIsClosure()

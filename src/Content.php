@@ -50,6 +50,10 @@ class Content implements Buildable
             $content = call_user_func($content, $self) ?? $self;
         }
 
+        if ($content instanceof Builder) {
+            return $content->isBuildable() ? (string)$content : '';
+        }
+
         return (string)$content;
     }
 
@@ -120,6 +124,7 @@ class Content implements Buildable
 
     /**
      * Clear existed content items and then add contents.
+     *
      * @param string|array|Buildable|Closure ...$contents
      *
      * @return $this
