@@ -8,6 +8,7 @@ namespace CodeSinging\ComponentBuilder\Tests;
 
 use CodeSinging\ComponentBuilder\Builder;
 use CodeSinging\ComponentBuilder\Store;
+use CodeSinging\Support\Str;
 use PHPUnit\Framework\TestCase;
 
 class ElementTest extends TestCase
@@ -127,6 +128,31 @@ class ElementTest extends TestCase
         self::assertEquals('<div class="outer"><i>inner</i></div>', (new Builder('i'))->add('inner')->parent(function (Builder $parent) {
             $parent->css('outer');
         }));
+    }
+
+    public function testBuilderId()
+    {
+        self::assertTrue(is_int((new Builder())->builderId()));
+        self::assertTrue(Str::startsWith((new Builder())->builderId('component'),'component_'));
+
+    }
+
+    public function testConfig()
+    {
+        $builder = new Builder();
+        $builder->config(['name' => 'demo']);
+
+        self::assertEquals('demo', $builder->config('name'));
+    }
+
+    public function testBuildableAndIsBuildable()
+    {
+        $builder = new Builder();
+        self::assertTrue($builder->isBuildable());
+        $builder->buildable(false);
+        self::assertFalse($builder->isBuildable());
+        $builder->buildable(true);
+        self::assertTrue($builder->isBuildable());
     }
 
     public function testCall()

@@ -7,6 +7,7 @@
 namespace CodeSinging\ComponentBuilder;
 
 use Closure;
+use CodeSinging\Support\Repository;
 use CodeSinging\Support\Str;
 
 class Builder implements Buildable
@@ -68,6 +69,24 @@ class Builder implements Buildable
     protected $attributes = [];
 
     /**
+     * The builder id.
+     * @var int
+     */
+    protected $builderId;
+
+    /**
+     * The builder count.
+     * @var int
+     */
+    protected static $builderCount = 0;
+
+    /**
+     * The builder config.
+     * @var Repository
+     */
+    protected $config;
+
+    /**
      * Builder constructor.
      *
      * @param string                         $tag
@@ -86,6 +105,8 @@ class Builder implements Buildable
         $this->style = new Style();
         $this->closing($closing);
         $this->lineBreak($lineBreak);
+        $this->builderId = ++ self::$builderCount;
+        $this->config = new Repository();
         $this->__init();
     }
 
@@ -323,6 +344,57 @@ class Builder implements Buildable
             $this->parent = new self($tag, '', $attributes, true, $lineBreak);
         }
         return $this;
+    }
+
+    /**
+     * Get the builder id.
+     * @param string|null $prefix
+     *
+     * @return int|string
+     */
+    public function builderId(string $prefix = null)
+    {
+        return $prefix ? ($prefix . '_' . $this->builderId) : $this->builderId;
+    }
+
+    /**
+     * Get or set builder config.
+     *
+     * @param string|array $key
+     * @param mixed|null   $default
+     *
+     * @return $this|mixed
+     */
+    public function config($key, $default = null)
+    {
+        if (is_array($key)) {
+            $this->config->set($key);
+            return $this;
+        } else {
+            return $this->config->get($key, $default);
+        }
+    }
+
+    /**
+     * Set whether the component is buildable.
+     *
+     * @param bool $buildable
+     *
+     * @return $this
+     */
+    public function buildable(bool $buildable = true)
+    {
+        $this->config(compact('buildable'));
+        return $this;
+    }
+
+    /**
+     * Get whether the component is buildable.
+     * @return bool
+     */
+    public function isBuildable()
+    {
+        return $this->config('buildable', true);
     }
 
     /**
