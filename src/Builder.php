@@ -94,8 +94,9 @@ class Builder implements Buildable
      * @param array|null                     $attributes
      * @param bool                           $closing
      * @param bool                           $lineBreak
+     * @param string|bool                    $glue
      */
-    public function __construct(string $tag = 'div', $content = null, array $attributes = null, bool $closing = true, bool $lineBreak = false)
+    public function __construct(string $tag = 'div', $content = null, array $attributes = null, bool $closing = true, bool $lineBreak = false, $glue = '')
     {
         $this->tag($tag);
         $this->content = new Content($content);
@@ -105,7 +106,8 @@ class Builder implements Buildable
         $this->style = new Style();
         $this->closing($closing);
         $this->lineBreak($lineBreak);
-        $this->builderId = ++ self::$builderCount;
+        $this->glue($glue);
+        $this->builderId = ++self::$builderCount;
         $this->config = new Repository();
         $this->__init();
     }
@@ -198,6 +200,19 @@ class Builder implements Buildable
     }
 
     /**
+     * Set the builder's glue to implode the content items.
+     *
+     * @param bool|string $glue
+     *
+     * @return $this
+     */
+    public function glue($glue = true)
+    {
+        $this->content->glue($glue);
+        return $this;
+    }
+
+    /**
      * Add css classes.
      *
      * @param string|array|Css|Closure $css
@@ -253,6 +268,7 @@ class Builder implements Buildable
 
     /**
      * Clear existed content items and then add contents.
+     *
      * @param string|array|Buildable|Closure ...$contents
      *
      * @return $this
@@ -281,7 +297,7 @@ class Builder implements Buildable
     /**
      * Add a named slot to the content.
      *
-     * @param string                 $name
+     * @param string                   $name
      * @param string|Buildable|Closure $content
      *
      * @return $this
@@ -312,19 +328,6 @@ class Builder implements Buildable
     }
 
     /**
-     * Set the glue of the content.
-     *
-     * @param string $glue
-     *
-     * @return $this
-     */
-    public function glue(string $glue = PHP_EOL)
-    {
-        $this->content->glue($glue);
-        return $this;
-    }
-
-    /**
      * Set the element's parent element.
      *
      * @param string|Closure $tag
@@ -348,6 +351,7 @@ class Builder implements Buildable
 
     /**
      * Get the builder id.
+     *
      * @param string|null $prefix
      *
      * @return int|string
@@ -457,15 +461,15 @@ class Builder implements Buildable
         $element = sprintf(
             '<%s%s>%s%s%s%s',
             $this->tag,
-            $this->attribute->isEmpty() ? '': ' ' . (string)$this->attribute,
+            $this->attribute->isEmpty() ? '' : ' ' . (string)$this->attribute,
             $this->lineBreak && !$this->content->isEmpty() ? PHP_EOL : '',
             (string)$this->content,
             $this->lineBreak && $this->closing ? PHP_EOL : '',
             $this->closing ? '</' . $this->tag . '>' : ''
         );
 
-        if ($this->parent instanceof self){
-            return  (string)$this->parent->add($element);
+        if ($this->parent instanceof self) {
+            return (string)$this->parent->add($element);
         }
 
         return $element;
