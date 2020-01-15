@@ -44,6 +44,16 @@ class ContentTest extends TestCase
         self::assertEquals('<span></span>', new Content($span, $div));
     }
 
+    public function testContentIsNotBuildableBuilderAndWithGlue()
+    {
+        $span = new Builder('span');
+        $div = (new Builder('div'))->buildable(false);
+        $content = new Content();
+        $content->glue(',');
+        self::assertEquals('<span></span>,<span></span>', $content->content($span, $span));
+        self::assertEquals('<span></span>,<span></span>', $content->content($span, $div, $span));
+    }
+
     public function testContentIsClosure()
     {
         self::assertEquals('ab', new Content(function () {

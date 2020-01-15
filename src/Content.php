@@ -50,10 +50,6 @@ class Content implements Buildable
             $content = call_user_func($content, $self) ?? $self;
         }
 
-        if ($content instanceof Builder) {
-            return $content->isBuildable() ? (string)$content : '';
-        }
-
         return (string)$content;
     }
 
@@ -233,6 +229,13 @@ class Content implements Buildable
      */
     public function __toString()
     {
-        return implode($this->glue, array_map([$this, 'parse'], $this->items));
+        $arr = [];
+        foreach ($this->items as $item) {
+            if ($item instanceof Builder and !$item->isBuildable()){
+                continue;
+            }
+            $arr[] = $this->parse($item);
+        }
+        return implode($this->glue, $arr);
     }
 }
