@@ -119,6 +119,18 @@ class Content implements Buildable
     }
 
     /**
+     * Clear existed content items and then add contents.
+     * @param string|array|Buildable|Closure ...$contents
+     *
+     * @return $this
+     */
+    public function content(...$contents)
+    {
+        $this->clear()->add(...$contents);
+        return $this;
+    }
+
+    /**
      * Add a text interpolation, and support store default value.
      *
      * @param string     $content
@@ -130,6 +142,16 @@ class Content implements Buildable
     {
         $this->add(sprintf('{{ %s }}', $content));
         is_null($store) or $this->store($content, $store);
+        return $this;
+    }
+
+    /**
+     * Clear all content items.
+     * @return $this
+     */
+    public function clear()
+    {
+        $this->items = [];
         return $this;
     }
 

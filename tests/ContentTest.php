@@ -58,6 +58,11 @@ class ContentTest extends TestCase
         self::assertEquals('abc', (new Content('c'))->prepend(['a', 'b']));
     }
 
+    public function testContent()
+    {
+        self::assertEquals('bc', (new Content('a'))->content('b', 'c'));
+    }
+
     public function testInterpolation()
     {
         self::assertEquals('{{ name }}', (new Content())->interpolation('name'));
@@ -68,6 +73,11 @@ class ContentTest extends TestCase
     {
         self::assertEquals('{{ age }}', (new Content())->interpolation('age', 20));
         self::assertEquals(20, Store::get('age'));
+    }
+
+    public function testClear()
+    {
+        self::assertEquals('', (new Content('a'))->clear());
     }
 
     public function testEmpty()
