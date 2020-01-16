@@ -72,13 +72,13 @@ class Builder implements Buildable
      * The builder id.
      * @var int
      */
-    protected $builderId;
+    protected $buildId;
 
     /**
      * The builder count.
      * @var int
      */
-    protected static $builderCount = 0;
+    protected static $buildCount = 0;
 
     /**
      * The builder config.
@@ -107,7 +107,7 @@ class Builder implements Buildable
         $this->closing($closing);
         $this->lineBreak($lineBreak);
         $this->glue($glue);
-        $this->builderId = ++self::$builderCount;
+        $this->buildId = ++self::$buildCount;
         $this->config = new Repository();
         $this->__init();
     }
@@ -350,19 +350,19 @@ class Builder implements Buildable
     }
 
     /**
-     * Get the builder id.
+     * Get the build id.
      *
      * @param string|null $prefix
      * @param string|null $suffix
      *
      * @return int|string
      */
-    public function builderId(string $prefix = null, string $suffix = null)
+    public function buildId(string $prefix = null, string $suffix = null)
     {
-        $builderId = $this->builderId;
-        $prefix and $builderId = $prefix . '_' . $builderId;
-        $suffix and $builderId = $builderId . '_' . $suffix;
-        return $builderId;
+        $buildId = $this->buildId;
+        $prefix and $buildId = $prefix . '_' . $buildId;
+        $suffix and $buildId = $buildId . '_' . $suffix;
+        return $buildId;
     }
 
     /**

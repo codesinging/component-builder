@@ -130,13 +130,13 @@ class ElementTest extends TestCase
         }));
     }
 
-    public function testBuilderId()
+    public function testBuildId()
     {
         $builder = new Builder();
-        self::assertTrue(is_int($builder->builderId()));
-        self::assertTrue($builder->builderId() > 0);
-        self::assertTrue(Str::startsWith($builder->builderId('component'), 'component_'));
-        self::assertTrue(Str::endsWith($builder->builderId('component', 'config'), '_config'));
+        self::assertTrue(is_int($builder->buildId()));
+        self::assertTrue($builder->buildId() > 0);
+        self::assertTrue(Str::startsWith($builder->buildId('component'), 'component_'));
+        self::assertTrue(Str::endsWith($builder->buildId('component', 'config'), '_config'));
 
     }
 
