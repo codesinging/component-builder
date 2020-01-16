@@ -466,10 +466,10 @@ class Builder implements Buildable
     }
 
     /**
-     * Return a string.
+     * Build the builder.
      * @return string
      */
-    public function __toString()
+    public function build()
     {
         $this->__build();
 
@@ -491,5 +491,14 @@ class Builder implements Buildable
         }
 
         return $element;
+    }
+
+    /**
+     * Return a string.
+     * @return string
+     */
+    public function __toString()
+    {
+        return $this->build();
     }
 }
