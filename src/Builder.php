@@ -353,12 +353,16 @@ class Builder implements Buildable
      * Get the builder id.
      *
      * @param string|null $prefix
+     * @param string|null $suffix
      *
      * @return int|string
      */
-    public function builderId(string $prefix = null)
+    public function builderId(string $prefix = null, string $suffix = null)
     {
-        return $prefix ? ($prefix . '_' . $this->builderId) : $this->builderId;
+        $builderId = $this->builderId;
+        $prefix and $builderId = $prefix . '_' . $builderId;
+        $suffix and $builderId = $builderId . '_' . $suffix;
+        return $builderId;
     }
 
     /**

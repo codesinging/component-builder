@@ -45,8 +45,8 @@ class ElementTest extends TestCase
 
     public function testSetAndBindAndStore()
     {
-        self::assertEquals('<div :id="id"></div>', (new Builder())->set('id',  'id', 11));
-        self::assertEquals('<div :bid="book.id"></div>', (new Builder())->set('bid',  'book.id', 99));
+        self::assertEquals('<div :id="id"></div>', (new Builder())->set('id', 'id', 11));
+        self::assertEquals('<div :bid="book.id"></div>', (new Builder())->set('bid', 'book.id', 99));
         self::assertEquals('<div :cid="cid"></div>', (new Builder())->set(['cid' => 'cid'], ['cid' => 22]));
         self::assertEquals('<div :uid="uid" :vid="v.id"></div>', (new Builder())->set(['uid' => ':uid', 'vid' => 'v.id'], ['vid' => 66]));
 
@@ -132,8 +132,11 @@ class ElementTest extends TestCase
 
     public function testBuilderId()
     {
-        self::assertTrue(is_int((new Builder())->builderId()));
-        self::assertTrue(Str::startsWith((new Builder())->builderId('component'),'component_'));
+        $builder = new Builder();
+        self::assertTrue(is_int($builder->builderId()));
+        self::assertTrue($builder->builderId() > 0);
+        self::assertTrue(Str::startsWith($builder->builderId('component'), 'component_'));
+        self::assertTrue(Str::endsWith($builder->builderId('component', 'config'), '_config'));
 
     }
 
