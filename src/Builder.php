@@ -125,7 +125,7 @@ class Builder implements Buildable
      *
      * @param mixed ...$parameters
      *
-     * @return Builder
+     * @return $this
      */
     public static function instance(...$parameters)
     {
