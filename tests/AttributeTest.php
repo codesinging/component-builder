@@ -15,20 +15,22 @@ class AttributeTest extends TestCase
 
     public function testHas()
     {
-        $attr = new Attribute(['id' => 1, 'disabled', 'loading' => true]);
+        $attr = new Attribute(['id' => 1, 'disabled', 'loading' => true, ':model' => 'item']);
 
         self::assertTrue($attr->has('id'));
         self::assertTrue($attr->has('disabled'));
         self::assertTrue($attr->has('loading'));
+        self::assertTrue($attr->has('model'));
     }
 
     public function testGet()
     {
-        $attr = new Attribute(['id' => 1, 'disabled', 'loading' => true]);
+        $attr = new Attribute(['id' => 1, 'disabled', 'loading' => true, ':model' => 'item']);
 
         self::assertEquals(1, $attr->get('id'));
         self::assertEquals(null, $attr->get('disabled'));
         self::assertEquals(true, $attr->get('loading'));
+        self::assertEquals('item', $attr->get('model'));
     }
 
     public function testSetNameIsStringAndValueIsCommonString()

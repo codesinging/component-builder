@@ -41,7 +41,7 @@ class Attribute implements Buildable
      */
     public function has(string $name)
     {
-        return array_key_exists($name, $this->data);
+        return array_key_exists($name, $this->data) || array_key_exists($this->fill($name, ':'), $this->data);
     }
 
     /**
@@ -54,7 +54,7 @@ class Attribute implements Buildable
      */
     public function get(string $name, $default = null)
     {
-        return $this->data[$name] ?? $default;
+        return $this->data[$name] ?? ($this->data[$this->fill($name, ':')] ?? $default);
     }
 
     /**
