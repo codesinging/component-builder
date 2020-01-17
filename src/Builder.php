@@ -374,7 +374,7 @@ class Builder implements Buildable
      */
     public function configKey(string $key = null)
     {
-        return $this->buildId('configs.config') . ($key ? '.' . $key : '');
+        return $this->buildId('components.id') . ($key ? '.' . $key : '');
     }
 
     /**
