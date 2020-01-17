@@ -366,7 +366,19 @@ class Builder implements Buildable
     }
 
     /**
-     * Get or set builder config.
+     * Get the config key.
+     *
+     * @param string|null $key
+     *
+     * @return string
+     */
+    public function configKey(string $key = null)
+    {
+        return $this->buildId('configs.config') . ($key ? '.' . $key : '');
+    }
+
+    /**
+     * Get or set builder config, the config will be stored.
      *
      * @param string|array $key
      * @param mixed|null   $default
@@ -476,6 +488,12 @@ class Builder implements Buildable
     public function build()
     {
         $this->__build();
+
+        if ($this->config->all()){
+            $this->store([
+                $this->configKey() => $this->config->all(),
+            ]);
+        }
 
         $this->mergeCss();
         $this->mergeStyle();

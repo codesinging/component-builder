@@ -140,12 +140,21 @@ class ElementTest extends TestCase
 
     }
 
+    public function testConfigKey()
+    {
+        $builder = new Builder();
+        self::assertEquals('configs.config_' . $builder->buildId(), $builder->configKey());
+        self::assertEquals('configs.config_' . $builder->buildId() . '.name', $builder->configKey('name'));
+    }
+
     public function testConfig()
     {
         $builder = new Builder();
         $builder->config(['name' => 'demo']);
+        $builder->build();
 
         self::assertEquals('demo', $builder->config('name'));
+        self::assertEquals(['name' => 'demo'], Store::get($builder->configKey()));
     }
 
     public function testStoreWhenNameIsArray()
